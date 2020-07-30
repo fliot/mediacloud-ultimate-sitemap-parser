@@ -60,7 +60,7 @@ class SitemapFetcher(object):
         '_web_client',
     ]
 
-    def __init__(self, url: str, recursion_level: int, web_client: Optional[AbstractWebClient] = None):
+    def __init__(self, url: str, recursion_level: int, web_client: Optional[AbstractWebClient] = None, proxies = None):
 
         if recursion_level > self.__MAX_RECURSION_LEVEL:
             raise SitemapException("Recursion level exceeded {} for URL {}.".format(self.__MAX_RECURSION_LEVEL, url))
@@ -70,6 +70,9 @@ class SitemapFetcher(object):
 
         if not web_client:
             web_client = RequestsWebClient()
+        
+        if not(proxies is None):
+            web_client.set_proxies(proxies)
 
         web_client.set_max_response_data_length(self.__MAX_SITEMAP_SIZE)
 

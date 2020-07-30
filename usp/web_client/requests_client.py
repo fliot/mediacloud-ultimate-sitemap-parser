@@ -3,6 +3,9 @@
 from http import HTTPStatus
 from typing import Optional, Dict
 
+from faker import Faker
+fake = Faker()
+
 import requests
 
 from .abstract_client import (
@@ -60,8 +63,6 @@ class RequestsWebClientErrorResponse(WebClientErrorResponse):
 class RequestsWebClient(AbstractWebClient):
     """requests-based web client to be used by the sitemap fetcher."""
 
-    __USER_AGENT = 'ultimate_sitemap_parser/{}'.format(__version__)
-
     __HTTP_REQUEST_TIMEOUT = 60
     """
     HTTP request timeout.
@@ -108,7 +109,7 @@ class RequestsWebClient(AbstractWebClient):
                 url,
                 timeout=self.__timeout,
                 stream=True,
-                headers={'User-Agent': self.__USER_AGENT},
+                headers={'User-Agent': fake.chrome()},
                 proxies=self.__proxies
             )
         except requests.exceptions.Timeout as ex:
@@ -120,7 +121,7 @@ class RequestsWebClient(AbstractWebClient):
             return RequestsWebClientErrorResponse(message=str(ex), retryable=False)
 
         else:
-
+            
             if 200 <= response.status_code < 300:
                 return RequestsWebClientSuccessResponse(
                     requests_response=response,
